@@ -37,7 +37,7 @@ from torch import Tensor
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
-from transformers.models.qwen2_vl.modeling_qwen2_vl import (F, List, Optional, Tuple, nn)
+from transformers.models.qwen2.modeling_qwen2 import (Optional, Tuple, nn)
 
 def forward(self, input: Tensor, output_size: Optional[list[int]] = None) -> Tensor:
     if self.padding_mode != "zeros":

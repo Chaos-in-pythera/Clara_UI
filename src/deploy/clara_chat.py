@@ -13,6 +13,14 @@ EXAMPLE_IMAGES = [
     "https://raw.githubusercontent.com/gradio-app/gradio/main/test/test_files/cheetah1.jpg",
 ]
 
+EXAMPLE_IMAGES_DICT = [
+    {'images_1': './examples/sample/test_1.png', 'message':'Ảnh chụp X-ray PA (Chụp Xquang tim phổi thẳng) bệnh nhân nam, 53 tuổi. Cho biết bệnh nhân bị gì?'},
+    {'images_2': './examples/sample/test_2.png', 'message':'Ảnh chụp X-ray PA (Chụp Xquang tim phổi thẳng) bệnh nhân nam, 35 tuổi. Cho biết bệnh nhân bị gì?'},
+    {'images_3': './examples/sample/test_3.png', 'message':'Ảnh chụp X-ray PA (Chụp Xquang tim phổi thẳng) bệnh nhân nam, 61 tuổi. Cho biết bệnh nhân bị gì?'},
+    {'images_4': './examples/sample/test_4.png', 'message':' Ảnh chụp X-ray PA (Chụp Xquang tim phổi thẳng) bệnh nhân nam, 79 tuổi. Cho biết bệnh nhân bị gì?'},
+    {'images_5': './examples/sample/test_5.png', 'message':'Chụp Xquang tim phổi thẳng) bệnh nhân nữ, 33 tuổi. Cho biết bệnh nhân bị gì?'},
+    
+]
 
 def api_run(image, message, history, model_number):
     """Model processing function with model selection"""
@@ -63,41 +71,113 @@ def clear_chat():
     return []
 
 # Create the Gradio interface
+# with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo:
+#     gr.Markdown("# 🤖 Multi-Modal AI Assistant")
+#     gr.Markdown("Upload an image and chat with different AI models!")
+    
+#     with gr.Row():
+#         with gr.Column(scale=1):
+#             # Image upload box
+#             image_input = gr.Image(
+#                 label="📷 Upload Image", 
+#                 type="pil",
+#                 height=300
+#             )
+            
+#             # Example images section
+#             gr.Markdown("### 🖼️ Example Images")
+#             gr.Markdown("Click any example below to load it:")
+            
+#             example_gallery = gr.Gallery(
+#                 value=EXAMPLE_IMAGES,
+#                 label="Select an example image",
+#                 show_label=True,
+#                 elem_id="gallery",
+#                 columns=2,
+#                 rows=1,
+#                 object_fit="cover",
+#                 height="auto",
+#                 allow_preview=False,
+#                 selected_index=None
+#             )
+        
+#         with gr.Column(scale=2):
+#             # Tabs for different models
+#             with gr.Tabs():
+#                 with gr.TabItem("🚀 Clara Model"):
+#                     chatbot_1 = gr.Chatbot(label="Chat with Clara", height=400, render_markdown= True)
+#                     with gr.Row():
+#                         msg_1 = gr.Textbox(
+#                             label="Message", 
+#                             placeholder="Ask something about the image...",
+#                             scale=4
+#                         )
+#                         submit_1 = gr.Button("Send", scale=1, variant="primary")
+#                         clear_1 = gr.Button("Clear", scale=1)
+                
+#                 with gr.TabItem("Gemini"):
+#                     chatbot_2 = gr.Chatbot(label="Chat with Gemini", height=400, render_markdown= True)
+#                     with gr.Row():
+#                         msg_2 = gr.Textbox(
+#                             label="Message", 
+#                             placeholder="What would you like to analyze?",
+#                             scale=4
+#                         )
+#                         submit_2 = gr.Button("Send", scale=1, variant="primary")
+#                         clear_2 = gr.Button("Clear", scale=1)
+                
+#                 with gr.TabItem("ChatGPT"):
+#                     chatbot_3 = gr.Chatbot(label="Chat with ChatGPT", height=400, render_markdown= True)
+#                     with gr.Row():
+#                         msg_3 = gr.Textbox(
+#                             label="Message", 
+#                             placeholder="How can I help you with this image?",
+#                             scale=4
+#                         )
+#                         submit_3 = gr.Button("Send", scale=1, variant="primary")
+#                         clear_3 = gr.Button("Clear", scale=1)
+
+#     # Event handlers for example buttons
+#     def show_warning(selection: gr.SelectData):
+#         return EXAMPLE_IMAGES[selection.index]
+
+#     example_gallery.select(
+#         fn=show_warning,
+#         outputs=image_input
+#     )
 with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo:
     gr.Markdown("# 🤖 Multi-Modal AI Assistant")
-    gr.Markdown("Upload an image and chat with different AI models!")
     
     with gr.Row():
         with gr.Column(scale=1):
-            # Image upload box
+            # Image input and examples section
             image_input = gr.Image(
                 label="📷 Upload Image", 
                 type="pil",
                 height=300
             )
             
-            # Example images section
-            gr.Markdown("### 🖼️ Example Images")
+            gr.Markdown("### 🖼️ Example Cases")
             gr.Markdown("Click any example below to load it:")
-            
             example_gallery = gr.Gallery(
-                value=EXAMPLE_IMAGES,
-                label="Select an example image",
+            value = [
+            next(v for k, v in example.items() if k.startswith("images_"))
+            for example in EXAMPLE_IMAGES_DICT
+        ],
+                label="Click an example to load image and message",
                 show_label=True,
                 elem_id="gallery",
                 columns=2,
-                rows=1,
-                object_fit="cover",
+                rows=3,
                 height="auto",
-                allow_preview=False,
-                selected_index=None
+                allow_preview=False
             )
-        
+
         with gr.Column(scale=2):
-            # Tabs for different models
             with gr.Tabs():
-                with gr.TabItem("🚀 Clara Model"):
-                    chatbot_1 = gr.Chatbot(label="Chat with Clara", height=400, render_markdown= True)
+                # Define all UI elements first
+                with gr.TabItem("🚀 Clara Vision"):
+                    chatbot_1 = gr.Chatbot(label="Chat with Clara", height=400, render_markdown=True)
                     with gr.Row():
                         msg_1 = gr.Textbox(
                             label="Message", 
@@ -107,8 +187,8 @@ with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo
                         submit_1 = gr.Button("Send", scale=1, variant="primary")
                         clear_1 = gr.Button("Clear", scale=1)
                 
-                with gr.TabItem("Gemini"):
-                    chatbot_2 = gr.Chatbot(label="Chat with Gemini", height=400, render_markdown= True)
+                with gr.TabItem("🔬 Gemini Vision"):
+                    chatbot_2 = gr.Chatbot(label="Chat with Gemini", height=400, render_markdown=True)
                     with gr.Row():
                         msg_2 = gr.Textbox(
                             label="Message", 
@@ -118,8 +198,8 @@ with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo
                         submit_2 = gr.Button("Send", scale=1, variant="primary")
                         clear_2 = gr.Button("Clear", scale=1)
                 
-                with gr.TabItem("ChatGPT"):
-                    chatbot_3 = gr.Chatbot(label="Chat with ChatGPT", height=400, render_markdown= True)
+                with gr.TabItem("🎯 ChatGPT Vision"):
+                    chatbot_3 = gr.Chatbot(label="Chat with ChatGPT", height=400, render_markdown=True)
                     with gr.Row():
                         msg_3 = gr.Textbox(
                             label="Message", 
@@ -129,76 +209,30 @@ with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo
                         submit_3 = gr.Button("Send", scale=1, variant="primary")
                         clear_3 = gr.Button("Clear", scale=1)
 
-    # Event handlers for example buttons
-    def show_warning(selection: gr.SelectData):
-        return EXAMPLE_IMAGES[selection.index]
+    # After all UI elements are defined, set up the example gallery handler
+    def load_example(evt: gr.SelectData):
+        """Load example image and its corresponding message"""
+        selected_example = EXAMPLE_IMAGES_DICT[evt.index]
+        image_path = selected_example[f'images_{evt.index + 1}']
+        message = selected_example['message']
+        return [
+            image_path,  # Load image
+            message,     # Fill message in all tabs
+            message,
+            message
+        ]
 
+    # Connect the example gallery event handler
     example_gallery.select(
-        fn=show_warning,
-        outputs=image_input
+        fn=load_example,
+        outputs=[
+            image_input,
+            msg_1,
+            msg_2,
+            msg_3
+        ]
     )
 
-    # Event handlers for Model 1
-    # submit_1.click(
-    #     fn=api_run,
-    #     inputs=[image_input, msg_1, chatbot_1],
-    #     outputs=chatbot_1
-    # ).then(
-    #     fn=lambda: "",
-    #     outputs=msg_1
-    # )
-    
-    # msg_1.submit(
-    #     fn=api_run,
-    #     inputs=[image_input, msg_1, chatbot_1],
-    #     outputs=chatbot_1
-    # ).then(
-    #     fn=lambda: "",
-    #     outputs=msg_1
-    # )
-    
-    # clear_1.click(fn=clear_chat, outputs=chatbot_1)
-
-    # # Event handlers for Model 2
-    # submit_2.click(
-    #     fn=api_run,
-    #     inputs=[image_input, msg_2, chatbot_2],
-    #     outputs=chatbot_2
-    # ).then(
-    #     fn=lambda: "",
-    #     outputs=msg_2
-    # )
-    
-    # msg_2.submit(
-    #     fn=api_run,
-    #     inputs=[image_input, msg_2, chatbot_2],
-    #     outputs=chatbot_2
-    # ).then(
-    #     fn=lambda: "",
-    #     outputs=msg_2
-    # )
-    
-    # clear_2.click(fn=clear_chat, outputs=chatbot_2)
-
-    # # Event handlers for Model 3
-    # submit_3.click(
-    #     fn=api_run,
-    #     inputs=[image_input, msg_3, chatbot_3],
-    #     outputs=chatbot_3
-    # ).then(
-    #     fn=lambda: "",
-    #     outputs=msg_3
-    # )
-    
-    # msg_3.submit(
-    #     fn=api_run,
-    #     inputs=[image_input, msg_3, chatbot_3],
-    #     outputs=chatbot_3
-    # ).then(
-    #     fn=lambda: "",
-    #     outputs=msg_3
-    # )
-        # Event handlers for Model 1 (Clara)
     submit_1.click(
         fn=lambda img, msg, hist: api_run(img, msg, hist, 1),
         inputs=[image_input, msg_1, chatbot_1],
@@ -257,4 +291,4 @@ with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo
     clear_3.click(fn=clear_chat, outputs=chatbot_3)
 
 if __name__ == "__main__":
-    demo.launch(share=False, debug=True)
+    demo.launch(share=True, debug=True)
