@@ -1,0 +1,5 @@
+pip3 install torch torchvision torchaudio
+datastes
+transformers
+fastapi
+uvicorn
