@@ -6,7 +6,6 @@ import requests
 import base64
 os.environ['GRADIO_TEMP_DIR'] = os.path.expanduser('./tmp')
 
-
 # Sample preloaded example images (you can replace with actual image paths)
 API_URL = "http://localhost:8314/predict"  # hoặc IP nếu deploy từ xa
 EXAMPLE_IMAGES = [
@@ -15,35 +14,42 @@ EXAMPLE_IMAGES = [
 ]
 
 
-
-# Mock model functions for each tab
-def api_run(image, message, history):
-    """Mock Model 1 processing function"""
+def api_run(image, message, history, model_number):
+    """Model processing function with model selection"""
     if image is None:
         return history + [["Please upload an image first.", None]]
     
+    # Map model number to model name
+    model_mapping = {
+        1: "clara",
+        2: "gemini",
+        3: "gpt"
+    }
+    
+    model_name = model_mapping.get(model_number, "clara")  # Default to clara if invalid number
+    
     os.makedirs("output", exist_ok=True)
-    # hash image content
     hash_image = hashlib.md5(image.tobytes()).hexdigest()
     image.save(os.path.join("output", f"{hash_image}.png"))
-    # open image and convert to base64
+    
     encoded_image = None
     with open(f"output/{hash_image}.png", "rb") as img_file:
         encoded_image = base64.b64encode(img_file.read()).decode("utf-8")
-    # Step 2: Prepare request payload
+        
     payload = {
         "images": encoded_image,
         "text": message,
-        "model_name": "clara"
+        "model_name": model_name
     }
-    # Step 4: Print response
+    
     response = requests.post(API_URL, json=payload)
     text = response.json()["outputs"]
+    
     if response.status_code == 200:
-        print("🧠 Model Output:\n", text)
+        print(f"🧠 {model_name.upper()} Output:\n", text)
     else:
         print("❌ Error:", response.status_code, text)
-    print(f"Model 1 analyzed your image and message: '{message}'. I can see an image with dimensions {image.size}.")
+    
     history.append([message, text])
     return history
 
@@ -90,8 +96,8 @@ with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo
         with gr.Column(scale=2):
             # Tabs for different models
             with gr.Tabs():
-                with gr.TabItem("🚀 Model 1 - Vision GPT"):
-                    chatbot_1 = gr.Chatbot(label="Chat with Model 1", height=400)
+                with gr.TabItem("🚀 Clara Model"):
+                    chatbot_1 = gr.Chatbot(label="Chat with Clara", height=400, render_markdown= True)
                     with gr.Row():
                         msg_1 = gr.Textbox(
                             label="Message", 
@@ -101,8 +107,8 @@ with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo
                         submit_1 = gr.Button("Send", scale=1, variant="primary")
                         clear_1 = gr.Button("Clear", scale=1)
                 
-                with gr.TabItem("🔬 Model 2 - Image Analyzer"):
-                    chatbot_2 = gr.Chatbot(label="Chat with Model 2", height=400)
+                with gr.TabItem("Gemini"):
+                    chatbot_2 = gr.Chatbot(label="Chat with Gemini", height=400, render_markdown= True)
                     with gr.Row():
                         msg_2 = gr.Textbox(
                             label="Message", 
@@ -112,8 +118,8 @@ with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo
                         submit_2 = gr.Button("Send", scale=1, variant="primary")
                         clear_2 = gr.Button("Clear", scale=1)
                 
-                with gr.TabItem("🎯 Model 3 - Advanced AI"):
-                    chatbot_3 = gr.Chatbot(label="Chat with Model 3", height=400)
+                with gr.TabItem("ChatGPT"):
+                    chatbot_3 = gr.Chatbot(label="Chat with ChatGPT", height=400, render_markdown= True)
                     with gr.Row():
                         msg_3 = gr.Textbox(
                             label="Message", 
@@ -133,8 +139,68 @@ with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo
     )
 
     # Event handlers for Model 1
+    # submit_1.click(
+    #     fn=api_run,
+    #     inputs=[image_input, msg_1, chatbot_1],
+    #     outputs=chatbot_1
+    # ).then(
+    #     fn=lambda: "",
+    #     outputs=msg_1
+    # )
+    
+    # msg_1.submit(
+    #     fn=api_run,
+    #     inputs=[image_input, msg_1, chatbot_1],
+    #     outputs=chatbot_1
+    # ).then(
+    #     fn=lambda: "",
+    #     outputs=msg_1
+    # )
+    
+    # clear_1.click(fn=clear_chat, outputs=chatbot_1)
+
+    # # Event handlers for Model 2
+    # submit_2.click(
+    #     fn=api_run,
+    #     inputs=[image_input, msg_2, chatbot_2],
+    #     outputs=chatbot_2
+    # ).then(
+    #     fn=lambda: "",
+    #     outputs=msg_2
+    # )
+    
+    # msg_2.submit(
+    #     fn=api_run,
+    #     inputs=[image_input, msg_2, chatbot_2],
+    #     outputs=chatbot_2
+    # ).then(
+    #     fn=lambda: "",
+    #     outputs=msg_2
+    # )
+    
+    # clear_2.click(fn=clear_chat, outputs=chatbot_2)
+
+    # # Event handlers for Model 3
+    # submit_3.click(
+    #     fn=api_run,
+    #     inputs=[image_input, msg_3, chatbot_3],
+    #     outputs=chatbot_3
+    # ).then(
+    #     fn=lambda: "",
+    #     outputs=msg_3
+    # )
+    
+    # msg_3.submit(
+    #     fn=api_run,
+    #     inputs=[image_input, msg_3, chatbot_3],
+    #     outputs=chatbot_3
+    # ).then(
+    #     fn=lambda: "",
+    #     outputs=msg_3
+    # )
+        # Event handlers for Model 1 (Clara)
     submit_1.click(
-        fn=api_run,
+        fn=lambda img, msg, hist: api_run(img, msg, hist, 1),
         inputs=[image_input, msg_1, chatbot_1],
         outputs=chatbot_1
     ).then(
@@ -143,19 +209,17 @@ with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo
     )
     
     msg_1.submit(
-        fn=api_run,
+        fn=lambda img, msg, hist: api_run(img, msg, hist, 1),
         inputs=[image_input, msg_1, chatbot_1],
         outputs=chatbot_1
     ).then(
         fn=lambda: "",
         outputs=msg_1
     )
-    
-    clear_1.click(fn=clear_chat, outputs=chatbot_1)
 
-    # Event handlers for Model 2
+    # Event handlers for Model 2 (Gemini)
     submit_2.click(
-        fn=api_run,
+        fn=lambda img, msg, hist: api_run(img, msg, hist, 2),
         inputs=[image_input, msg_2, chatbot_2],
         outputs=chatbot_2
     ).then(
@@ -164,19 +228,17 @@ with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo
     )
     
     msg_2.submit(
-        fn=api_run,
+        fn=lambda img, msg, hist: api_run(img, msg, hist, 2),
         inputs=[image_input, msg_2, chatbot_2],
         outputs=chatbot_2
     ).then(
         fn=lambda: "",
         outputs=msg_2
     )
-    
-    clear_2.click(fn=clear_chat, outputs=chatbot_2)
 
-    # Event handlers for Model 3
+    # Event handlers for Model 3 (ChatGPT)
     submit_3.click(
-        fn=api_run,
+        fn=lambda img, msg, hist: api_run(img, msg, hist, 3),
         inputs=[image_input, msg_3, chatbot_3],
         outputs=chatbot_3
     ).then(
@@ -185,14 +247,13 @@ with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo
     )
     
     msg_3.submit(
-        fn=api_run,
+        fn=lambda img, msg, hist: api_run(img, msg, hist, 3),
         inputs=[image_input, msg_3, chatbot_3],
         outputs=chatbot_3
     ).then(
         fn=lambda: "",
         outputs=msg_3
     )
-    
     clear_3.click(fn=clear_chat, outputs=chatbot_3)
 
 if __name__ == "__main__":

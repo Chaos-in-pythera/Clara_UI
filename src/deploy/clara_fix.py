@@ -14,10 +14,19 @@ EXAMPLE_IMAGES = [
     "https://raw.githubusercontent.com/gradio-app/gradio/main/test/test_files/cheetah1.jpg",
 ]
 
-def api_run(image, model_name):
+def api_run(image, model_number):
     """API call function for different models"""
     if image is None:
         return "Please upload an image first."
+    
+    # Map model number to model name
+    model_mapping = {
+        1: "clara",
+        2: "gemini",
+        3: "gpt"
+    }
+    
+    model_name = model_mapping.get(model_number, "clara")
     
     os.makedirs("output", exist_ok=True)
     # Hash image content
@@ -48,8 +57,19 @@ def load_example_image(selection: gr.SelectData):
     """Load example image from gallery"""
     return EXAMPLE_IMAGES[selection.index]
 
+css = """
+.output-box {
+    border: 2px solid #888;
+    border-radius: 10px;
+    padding: 15px;
+    background-color: #1e1e2f;  /* nền tối nhẹ nếu giao diện dark mode */
+    margin-top: 10px;
+}
+"""
+
+
 # Create the Gradio interface
-with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo:
+with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft(), css=css) as demo:
     gr.Markdown("# 🤖 Multi-Modal AI Assistant")
     gr.Markdown("Upload an image and get responses from different AI models!")
     
@@ -81,31 +101,64 @@ with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo
         
         with gr.Column(scale=2):
             # Tabs for different models
+            # with gr.Tabs():
+            #     with gr.TabItem("🚀 Clara Model"):
+            #         output_1 = gr.Textbox(
+            #             label="Model Response",
+            #             placeholder="Response will appear here...",
+            #             lines=10,
+            #             interactive=False
+            #         )
+            #         submit_1 = gr.Button("Send", scale=1, variant="primary")
+                
+            #     with gr.TabItem("Gemini"):
+            #         output_2 = gr.Textbox(
+            #             label="Model Response",
+            #             placeholder="Response will appear here...",
+            #             lines=10,
+            #             interactive=False
+            #         )
+            #         submit_2 = gr.Button("Send", scale=1, variant="primary")
+                
+            #     with gr.TabItem("ChatGPT"):   
+            #         output_3 = gr.Textbox(
+            #             label="Model Response",
+            #             placeholder="Response will appear here...",
+            #             lines=10,
+            #             interactive=False
+            #         )
+            #         submit_3 = gr.Button("Send", scale=1, variant="primary")
             with gr.Tabs():
-                with gr.TabItem("🚀 Model 1 - Vision GPT"):
-                    output_1 = gr.Textbox(
+                with gr.TabItem("🚀 Clara Model"):
+                    output_1 = gr.Markdown(
                         label="Model Response",
-                        placeholder="Response will appear here...",
-                        lines=10,
-                        interactive=False
+                        value="",
+                        show_label=True,
+                        elem_id="clara-output",
+                        elem_classes=["output-box"]
+
                     )
                     submit_1 = gr.Button("Send", scale=1, variant="primary")
                 
-                with gr.TabItem("🔬 Model 2 - Image Analyzer"):
-                    output_2 = gr.Textbox(
+                with gr.TabItem("Gemini"):
+                    output_2 = gr.Markdown(
                         label="Model Response",
-                        placeholder="Response will appear here...",
-                        lines=10,
-                        interactive=False
+                        value="",
+                        show_label=True,
+                        elem_id="gemini-output",
+                        elem_classes=["output-box"]
+
                     )
                     submit_2 = gr.Button("Send", scale=1, variant="primary")
                 
-                with gr.TabItem("🎯 Model 3 - Advanced AI"):   
-                    output_3 = gr.Textbox(
+                with gr.TabItem("ChatGPT"):   
+                    output_3 = gr.Markdown(
                         label="Model Response",
-                        placeholder="Response will appear here...",
-                        lines=10,
-                        interactive=False
+                        value="",
+                        show_label=True,
+                        elem_id="chatgpt-output",
+                        elem_classes=["output-box"]
+
                     )
                     submit_3 = gr.Button("Send", scale=1, variant="primary")
 
@@ -117,7 +170,7 @@ with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo
 
     # Event handlers for Model 1
     submit_1.click(
-        fn=lambda img: api_run(img, "clara"),
+        fn=lambda img: api_run(img, 1),
         inputs=[image_input],
         outputs=output_1
     )
@@ -125,17 +178,17 @@ with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo
 
     # Event handlers for Model 2
     submit_2.click(
-        fn=lambda img: api_run(img, "analyzer"),
+        fn=lambda img: api_run(img, 2),
         inputs=[image_input],
         outputs=output_2
     )
     
     # Event handlers for Model 3
     submit_3.click(
-        fn=lambda img: api_run(img, "advanced"),
+        fn=lambda img: api_run(img,3),
         inputs=[image_input],
         outputs=output_3
     )
     
 if __name__ == "__main__":
-    demo.launch(share=False, debug=True)
+    demo.launch(share=True, debug=True)

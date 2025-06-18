@@ -4,6 +4,7 @@ from PIL import Image
 import io
 import base64
 from ..model.hf_model import ClaraPipeline
+from ..model.api_model import GeminiMedicalPipeline, ChatGPTMedicalVisionPipeline
 
 app = FastAPI()
 
@@ -19,7 +20,10 @@ class PredictionResponse(BaseModel):
 # init clara model 
 model_path = '/home/truongnn/chaos/code/repo/medical_inferneces/model_hf_cached'
 
-clara_model = ClaraPipeline(model_path)
+# clara_model = ClaraPipeline(model_path)
+clara_model = None
+gemini_pipeline = GeminiMedicalPipeline()
+chat_gpt_pipeline = ChatGPTMedicalVisionPipeline()
 
 
 
@@ -36,6 +40,15 @@ async def predict(request: PredictionRequest):
         if request.model_name.lower() == 'clara':
             response = clara_model.run(image, request.text)
             return PredictionResponse(outputs=response)
+        
+        elif request.model_name.lower() == 'gemini':
+            response = gemini_pipeline.run(image, request.text)
+            return PredictionResponse(outputs=response)
+        
+        elif request.model_name.lower() == 'gpt':
+            response = chat_gpt_pipeline.run(image, request.text)
+            return PredictionResponse(outputs=response)
+            
 
         # Add other model types here
         # elif isinstance(model, OtherModel):
