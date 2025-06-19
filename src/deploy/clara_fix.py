@@ -83,132 +83,6 @@ css = """
 """
 
 
-# # Create the Gradio interface
-# with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft(), css=css) as demo:
-#     gr.Markdown("# 🤖 Multi-Modal AI Assistant")
-#     gr.Markdown("Upload an image and get responses from different AI models!")
-    
-#     with gr.Row():
-#         with gr.Column(scale=1):
-#             # Image upload box
-#             image_input = gr.Image(
-#                 label="📷 Upload Image", 
-#                 type="pil",
-#                 height=300
-#             )
-            
-#             # Example images section
-#             gr.Markdown("### 🖼️ Example Cases")
-#             gr.Markdown("Click any example below to load it:")
-            
-#             # example_gallery = gr.Gallery(
-#             #     value=EXAMPLE_IMAGES,
-#             #     label="Select an example image",
-#             #     show_label=True,
-#             #     elem_id="gallery",
-#             #     columns=2,
-#             #     rows=1,
-#             #     object_fit="cover",
-#             #     height="auto",
-#             #     allow_preview=False,
-#             #     selected_index=None
-#             # )
-            
-#             example_gallery = gr.Gallery(
-#             value = [
-#             next(v for k, v in example.items() if k.startswith("images_"))
-#             for example in EXAMPLE_IMAGES_DICT
-#         ],
-#                 label="Click an example to load image and message",
-#                 show_label=True,
-#                 elem_id="gallery",
-#                 columns=2,
-#                 rows=3,
-#                 height="auto",
-#                 allow_preview=False
-#             )
-        
-#         with gr.Column(scale=2):
-#             with gr.Tabs():
-#                 with gr.TabItem("🚀 Clara Model"):
-#                     output_1 = gr.Markdown(
-#                         label="Model Response",
-#                         value="",
-#                         show_label=True,
-#                         elem_id="clara-output",
-#                         elem_classes=["output-box"]
-
-#                     )
-#                     submit_1 = gr.Button("Send", scale=1, variant="primary")
-                
-#                 with gr.TabItem("Gemini"):
-#                     output_2 = gr.Markdown(
-#                         label="Model Response",
-#                         value="",
-#                         show_label=True,
-#                         elem_id="gemini-output",
-#                         elem_classes=["output-box"]
-
-#                     )
-#                     submit_2 = gr.Button("Send", scale=1, variant="primary")
-                
-#                 with gr.TabItem("ChatGPT"):   
-#                     output_3 = gr.Markdown(
-#                         label="Model Response",
-#                         value="",
-#                         show_label=True,
-#                         elem_id="chatgpt-output",
-#                         elem_classes=["output-box"]
-
-#                     )
-#                     submit_3 = gr.Button("Send", scale=1, variant="primary")
-
-#     def load_example(evt: gr.SelectData):
-#         """Load example image and its corresponding message"""
-#         selected_example = EXAMPLE_IMAGES_DICT[evt.index]
-#         image_path = selected_example[f'images_{evt.index + 1}']
-#         message = selected_example['message']
-#         return [
-#             image_path,  # Load image
-#             message,     # Fill message in all tabs
-#             message,
-#             message
-#         ]
-
-#     # # Event handlers for example gallery
-#     # example_gallery.select(
-#     #     fn=load_example_image,
-#     #     outputs=image_input
-#     # )
-#     example_gallery.select(
-#         fn=load_example,
-#         outputs=[
-#             image_input,
-#             messages,
-#         ]
-#     )
-
-#     # Event handlers for Model 1
-#     submit_1.click(
-#         fn=lambda img: api_run(img, 1, messages=messages),
-#         inputs=[image_input],
-#         outputs=output_1
-#     )
-    
-
-#     # Event handlers for Model 2
-#     submit_2.click(
-#         fn=lambda img: api_run(img, 2, messages=messages),
-#         inputs=[image_input],
-#         outputs=output_2
-#     )
-    
-#     # Event handlers for Model 3
-#     submit_3.click(
-#         fn=lambda img: api_run(img,3, messages= messages),
-#         inputs=[image_input],
-#         outputs=output_3
-#     )
 with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft(), css=css) as demo:
     gr.Markdown("# 🤖 Multi-Modal AI Assistant")
     gr.Markdown("Upload an image and get responses from different AI models!")
@@ -236,7 +110,7 @@ with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft(), css=css
 
         with gr.Column(scale=2):
             with gr.Tabs():
-                with gr.TabItem("🚀 Clara Model"):
+                with gr.TabItem("Clara"):
                     output_1 = gr.Markdown(label="Model Response", value="", show_label=True,
                                            elem_id="clara-output", elem_classes=["output-box"])
                     submit_1 = gr.Button("Send", scale=1, variant="primary")

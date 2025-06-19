@@ -70,80 +70,6 @@ def clear_chat():
     """Clear chat history"""
     return []
 
-# Create the Gradio interface
-# with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo:
-#     gr.Markdown("# 🤖 Multi-Modal AI Assistant")
-#     gr.Markdown("Upload an image and chat with different AI models!")
-    
-#     with gr.Row():
-#         with gr.Column(scale=1):
-#             # Image upload box
-#             image_input = gr.Image(
-#                 label="📷 Upload Image", 
-#                 type="pil",
-#                 height=300
-#             )
-            
-#             # Example images section
-#             gr.Markdown("### 🖼️ Example Images")
-#             gr.Markdown("Click any example below to load it:")
-            
-#             example_gallery = gr.Gallery(
-#                 value=EXAMPLE_IMAGES,
-#                 label="Select an example image",
-#                 show_label=True,
-#                 elem_id="gallery",
-#                 columns=2,
-#                 rows=1,
-#                 object_fit="cover",
-#                 height="auto",
-#                 allow_preview=False,
-#                 selected_index=None
-#             )
-        
-#         with gr.Column(scale=2):
-#             # Tabs for different models
-#             with gr.Tabs():
-#                 with gr.TabItem("🚀 Clara Model"):
-#                     chatbot_1 = gr.Chatbot(label="Chat with Clara", height=400, render_markdown= True)
-#                     with gr.Row():
-#                         msg_1 = gr.Textbox(
-#                             label="Message", 
-#                             placeholder="Ask something about the image...",
-#                             scale=4
-#                         )
-#                         submit_1 = gr.Button("Send", scale=1, variant="primary")
-#                         clear_1 = gr.Button("Clear", scale=1)
-                
-#                 with gr.TabItem("Gemini"):
-#                     chatbot_2 = gr.Chatbot(label="Chat with Gemini", height=400, render_markdown= True)
-#                     with gr.Row():
-#                         msg_2 = gr.Textbox(
-#                             label="Message", 
-#                             placeholder="What would you like to analyze?",
-#                             scale=4
-#                         )
-#                         submit_2 = gr.Button("Send", scale=1, variant="primary")
-#                         clear_2 = gr.Button("Clear", scale=1)
-                
-#                 with gr.TabItem("ChatGPT"):
-#                     chatbot_3 = gr.Chatbot(label="Chat with ChatGPT", height=400, render_markdown= True)
-#                     with gr.Row():
-#                         msg_3 = gr.Textbox(
-#                             label="Message", 
-#                             placeholder="How can I help you with this image?",
-#                             scale=4
-#                         )
-#                         submit_3 = gr.Button("Send", scale=1, variant="primary")
-#                         clear_3 = gr.Button("Clear", scale=1)
-
-#     # Event handlers for example buttons
-#     def show_warning(selection: gr.SelectData):
-#         return EXAMPLE_IMAGES[selection.index]
-
-#     example_gallery.select(
-#         fn=show_warning,
-#         outputs=image_input
 #     )
 with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo:
     gr.Markdown("# 🤖 Multi-Modal AI Assistant")
@@ -176,7 +102,7 @@ with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo
         with gr.Column(scale=2):
             with gr.Tabs():
                 # Define all UI elements first
-                with gr.TabItem("🚀 Clara Vision"):
+                with gr.TabItem("Clara"):
                     chatbot_1 = gr.Chatbot(label="Chat with Clara", height=400, render_markdown=True)
                     with gr.Row():
                         msg_1 = gr.Textbox(
@@ -187,7 +113,7 @@ with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo
                         submit_1 = gr.Button("Send", scale=1, variant="primary")
                         clear_1 = gr.Button("Clear", scale=1)
                 
-                with gr.TabItem("🔬 Gemini Vision"):
+                with gr.TabItem("Gemini"):
                     chatbot_2 = gr.Chatbot(label="Chat with Gemini", height=400, render_markdown=True)
                     with gr.Row():
                         msg_2 = gr.Textbox(
@@ -198,7 +124,7 @@ with gr.Blocks(title="Multi-Modal AI Assistant", theme=gr.themes.Soft()) as demo
                         submit_2 = gr.Button("Send", scale=1, variant="primary")
                         clear_2 = gr.Button("Clear", scale=1)
                 
-                with gr.TabItem("🎯 ChatGPT Vision"):
+                with gr.TabItem("ChatGPT"):
                     chatbot_3 = gr.Chatbot(label="Chat with ChatGPT", height=400, render_markdown=True)
                     with gr.Row():
                         msg_3 = gr.Textbox(

@@ -16,12 +16,11 @@ class PredictionRequest(BaseModel):
 
 class PredictionResponse(BaseModel):
     outputs: str
-    
 # init clara model 
-model_path = '/home/truongnn/chaos/code/repo/medical_inferneces/model_hf_cached'
+model_path = '/home/truongnn/chaos/code/repo/medical_inferneces/model_hf_cached' # FIXME
 
-# clara_model = ClaraPipeline(model_path)
-clara_model = None
+clara_model = ClaraPipeline(model_path)
+# clara_model = None
 gemini_pipeline = GeminiMedicalPipeline()
 chat_gpt_pipeline = ChatGPTMedicalVisionPipeline()
 

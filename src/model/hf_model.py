@@ -12,7 +12,7 @@ class ClaraPipeline:
         self.model, self.tokenizer = FastLanguageModel.from_pretrained(
             model_name=model_path,
             max_seq_length=max_seq_length,
-            load_in_4bit=False,
+            load_in_4bit=True,
             # load_in_8bit= False,
             # dtype= torch.bfloat16
         )
@@ -61,18 +61,6 @@ class ClaraPipeline:
             "content": [{"type": "text", "text": 'Kết luận từ thông tin đó bệnh nhân bị gì?, Hãy nói chi tiết.'}]
         })
         response_2 = self._generate_response(conversation, image)
-        output = f' Nhận xét hình ảnh \n{response_1}\n Kết luận:\n {response_2}'
+        output = f"##  Nhận xét hình ảnh:\n\n{response_1}\n\n---\n\n##  Kết luận:\n\n{response_2}"
 
         return output
-
-
-if __name__ == "__main__":
-    model_path = "/home/truongnn/chaos/code/repo/medical_inferneces/model_hf_cached"
-    image_path = "/home/truongnn/chaos/code/repo/medical_inferneces/examples/test_1.png"
-    image = Image.open(image_path).convert("RGB").resize((448, 448))
-
-    follow_up_question = "Ảnh X-quang này có gì bất thường?"
-
-    clara = ClaraPipeline(model_path)
-    answer = clara.run(image, follow_up_question)
-    print("\n👉 Answer:", answer)

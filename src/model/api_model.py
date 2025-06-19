@@ -106,19 +106,3 @@ Hãy xem xét ảnh y tế bên dưới và phân tích **bằng định dạng 
 
         return response.choices[0].message.content
     
-    
-if __name__ == "__main__":
-    image_path = "/home/truongnn/chaos/code/repo/medical_inferneces/examples/test_1.png"
-    image = Image.open(image_path).convert("RGB").resize((512, 512))
-    question = "Ảnh X-quang phổi này có gì bất thường? Hãy phân tích và kết luận sơ bộ dưới dạng markdown."
-
-    # Dùng Gemini
-    gemini_pipeline = GeminiMedicalPipeline()
-    gemini_result = gemini_pipeline.run(image, question)
-    print("📊 Gemini Result:\n", gemini_result)
-
-    # Dùng OpenRouter (gpt-4-vision hoặc gemini-pro-vision)
-    chatgpt_pipeline = ChatGPTMedicalVisionPipeline(model="openai/o4-mini")
-    chatgpt_result = chatgpt_pipeline.run(image, question)
-    print("📊 OpenRouter Result:\n", chatgpt_result)
-
