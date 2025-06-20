@@ -117,7 +117,7 @@ tomlkit==0.13.3
 torch==2.7.0
 tqdm==4.67.1
 transformers==4.52.4
-triton==3.3.1
+triton==3.3.0
 trl==0.18.2
 typeguard==4.4.3
 typer==0.16.0
